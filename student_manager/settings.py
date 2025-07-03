@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard',
 ]
-# INSTALLED_APPS += ['corsheaders']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -39,11 +39,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
-# CORS_ALLOWED_ORIGINS = [
-#     'https://student-manager-cmak.onrender.com',
-# ]
 
 ROOT_URLCONF = 'student_manager.urls'
 
