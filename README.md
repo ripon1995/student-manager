@@ -3,9 +3,9 @@
 project structure
 
 ```plaintext
-dashboard_backend/
+student_manager/
 ├── manage.py
-├── dashboard/
+├── student_manager/
 │   ├── settings.py
 │   ├── urls.py
 │   ├── templates/
