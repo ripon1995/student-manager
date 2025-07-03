@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, serif; padding: 20px; }
+        .dashboard { display: flex; gap: 20px; }
+        .card {
+            background: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            width: 150px;
+        }
+        .card a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+        .card:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    <div class="dashboard">
+        <div class="card">
+            Student
+        </div>
+        <div class="card">
+            Course
+        </div>
+        <div class="card">
+            payments
+        </div>
+    </div>
+
+    <hr>
+
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
