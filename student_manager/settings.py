@@ -27,10 +27,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'dashboard',
     'course',
     'student',
 ]
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'student_manager.utils.custom_exception_handler.custom_exception_handler',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -17,3 +17,11 @@ student_manager/
 │   ├── templates/
 │   │   └── base.html
 │   ├── urls.py
+├── course/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+├── student/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
