@@ -7,3 +7,10 @@ class CourseListCreateSerializer(ModelSerializer):
         model = Course
         fields = ["id", "title", "description", "created_at"]
         read_only_fields = ["created_at"]
+
+
+class CourseRetrieveUpdateDestroySerializer(ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ["id", "title", "description", "created_at"]
+        read_only_fields = ["title", "created_at"]
