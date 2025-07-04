@@ -1,14 +1,6 @@
-from django.urls import path
-from .views import CourseListCreateAPIView, CourseRetrieveUpdateDestroyAPIView
-from .views import CourseListView
+from django.urls import path, include
 
 urlpatterns = [
-    path('api/courses/', CourseListCreateAPIView.as_view(), name="course_list_create_api"),
-    path("api/course/<uuid:pk>/", CourseRetrieveUpdateDestroyAPIView.as_view(), name="course_detail_update_delete_api"),
+    path('api/', include('course.course_urls.api_urls')),
+    path('view/', include('course.course_urls.template_urls')),
 ]
-
-template_urls = [
-    path('courses/', CourseListView.as_view(), name='course_list_view'),
-]
-
-urlpatterns += template_urls
