@@ -1,7 +1,7 @@
+from django.http.response import Http404
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
-
 from student_manager.utils.enum_helper import ErrorType
 
 
@@ -27,12 +27,29 @@ def format_validation_errors(exc):
     }, )
 
 
+def format_http404_errors(exc):
+    return Response({
+        'status': ErrorType.NOT_FOUND.value,
+        'status_code': status.HTTP_404_NOT_FOUND,
+        'errors': exc if hasattr(exc, 'detail') else str(exc)
+    }, status=status.HTTP_404_NOT_FOUND)
+
+
+def format_generic_error(exc):
+    return Response({
+        'detail': ErrorType.INTERNAL_ERROR.value,
+        'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR
+    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def custom_exception_handler(exc, context):
+    print(type(exc))
+
     if isinstance(exc, ValidationError):
         return format_validation_errors(exc)
 
+    elif isinstance(exc, Http404):
+        return format_http404_errors(exc)
+
     else:
-        return Response({
-            'detail': ErrorType.INTERNAL_ERROR.value,
-            'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return format_generic_error(exc)
