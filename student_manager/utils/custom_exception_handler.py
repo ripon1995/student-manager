@@ -2,6 +2,8 @@ from django.http.response import Http404
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
+
+from student_manager.utils.custom_global_exceptions import InvalidUUIDException
 from student_manager.utils.enum_helper import ErrorType
 
 
@@ -42,14 +44,23 @@ def format_generic_error(exc):
     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def custom_exception_handler(exc, context):
-    print(type(exc))
+def format_invalid_uuid_exception(exc):
+    return Response({
+        'status': exc.default_code,
+        'status_code': exc.status_code,
+        'errors': str(exc)
+    }, status=status.HTTP_400_BAD_REQUEST)
 
+
+def custom_exception_handler(exc, context):
     if isinstance(exc, ValidationError):
         return format_validation_errors(exc)
 
     elif isinstance(exc, Http404):
         return format_http404_errors(exc)
+
+    elif isinstance(exc, InvalidUUIDException):
+        return format_invalid_uuid_exception(exc)
 
     else:
         return format_generic_error(exc)
