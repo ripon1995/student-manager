@@ -1,5 +1,4 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -33,9 +32,7 @@ def custom_exception_handler(exc, context):
         return format_validation_errors(exc)
 
     else:
-        print(exc)
-        # Custom handling for unhandled exceptions
         return Response({
-            'detail': 'Something went wrong.',
+            'detail': ErrorType.INTERNAL_ERROR.value,
             'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
