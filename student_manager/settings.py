@@ -80,7 +80,7 @@ else:
     DATABASES = {
         "default": {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'student-manager',
+            'NAME': 'student-manager-db',
             'USER': 'postgres',
             "PASSWORD": "rootless",
             "HOST": "127.0.0.1",

@@ -33,6 +33,7 @@ def custom_exception_handler(exc, context):
         return format_validation_errors(exc)
 
     else:
+        print(exc)
         # Custom handling for unhandled exceptions
         return Response({
             'detail': 'Something went wrong.',
