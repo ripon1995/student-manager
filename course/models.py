@@ -14,6 +14,7 @@ class Course(models.Model):
     capacity = models.IntegerField(default=40, verbose_name='Capacity')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
     students = models.ManyToManyField(Student, verbose_name='Students', blank=True, related_name='courses')
+    course_quote = models.CharField(max_length=200, verbose_name='Course Quote', null=True, blank=True)
 
     class Meta:
         db_table = 'course'
