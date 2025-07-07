@@ -9,7 +9,7 @@
             {% for course in courses %}
                 <div class="card shadow mb-4" style="width: 100%;">
                     <div class="card-body">
-                        <h5 class="card-title"> {{ course.title }}</h5>
+                        <h4 class="card-title"> <i class="fa-solid fa-hashtag"></i> {{ course.title }}</h4>
                         <p class="card-text">Some quick content about the card.</p>
                         <a href="{% url 'course_detail_view' course.id %}" class="btn btn-info">View Course</a>
                     </div>
