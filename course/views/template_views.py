@@ -15,7 +15,6 @@ class CourseDetailView(View):
     template_name = 'course/course_detail.html'
 
     def get(self, request, *args, **kwargs):
-        print('inside course detail view')
         course_id = kwargs.get('pk')
         course = Course.objects.get(pk=course_id)
         return render(request, self.template_name, {'course': course})

@@ -12,5 +12,5 @@ class CourseListCreateSerializer(ModelSerializer):
 class CourseRetrieveUpdateDestroySerializer(ModelSerializer):
     class Meta:
         model = Course
-        fields = ["id", "title", "description", "created_at"]
+        fields = ["id", "title", "description", "created_at", "students"]
         read_only_fields = ["title", "created_at"]
