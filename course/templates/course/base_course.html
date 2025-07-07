@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Dashboard</title>
+    <title>{% block title %}Course Dashboard{% endblock %}</title>
     <style>
         body {
             font-family: Arial, serif;
             padding: 20px;
         }
 
-        .dashboard {
-            display: flex;
-            gap: 20px;
-        }
-
         .card {
             background: #f3f3f3;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            border: 2px solid #ccc;
+            border-radius: 20px;
             padding: 20px;
-            text-align: center;
+            text-align: left;
             width: 150px;
         }
 
@@ -31,27 +25,11 @@
         }
 
         .card:hover {
-            background: #e0e0e0;
+            background: #4c75b3;
         }
     </style>
 </head>
 <body>
-<h1>Dashboard</h1>
-
-<div class="dashboard">
-    <div class="card">
-        Student
-    </div>
-    <div class="card">
-        <a href="{% url 'course_list_view' %}">Course</a>
-    </div>
-    <div class="card">
-        payments
-    </div>
-</div>
-
-<hr>
-
 <div>
     {% block content %}{% endblock %}
 </div>

@@ -1,0 +1,22 @@
+{% extends 'course/base_course.html' %}
+
+{#if need to adjust the title#}
+{#{% block title %}Courses{% endblock %}#}
+{% block content %}
+    <h4 style="text-align: center">Course List</h4>
+    <div class="container py-4">
+        <ul>
+            {% for course in courses %}
+                <div class="card shadow mb-4" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title"> {{ course.title }}</h5>
+                        <p class="card-text">Some quick content about the card.</p>
+                        <a href="#" class="btn btn-info">View Course</a>
+                    </div>
+                </div>
+            {% empty %}
+                <li>No courses available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
