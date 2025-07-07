@@ -1,12 +1,20 @@
-{#{% extends 'dashboard/base.html' %}#}
+{% extends 'dashboard/base.html' %}
 
+{% block title %}Course List{% endblock %}
 {% block content %}
-    <h2>Course List</h2>
-    <ul>
-        {% for course in courses %}
-            <li>{{ course.title }}</li>
-        {% empty %}
-            <li>No courses available.</li>
-        {% endfor %}
-    </ul>
+    <div class="container py-4">
+        <ul>
+            {% for course in courses %}
+                <div class="card shadow mb-4" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title"> {{ course.title }}</h5>
+                        <p class="card-text">Some quick content about the card.</p>
+                        <a href="#" class="btn btn-info">View Course</a>
+                    </div>
+                </div>
+            {% empty %}
+                <li>No courses available.</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
