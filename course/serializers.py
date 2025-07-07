@@ -6,7 +6,7 @@ from course.models import Course
 class CourseListCreateSerializer(ModelSerializer):
     class Meta:
         model = Course
-        fields = ["id", "title", "description", "created_at"]
+        fields = ["id", "title", "description", "created_at", "days", "time", "capacity", "course_fee", "course_quote"]
         read_only_fields = ["created_at"]
 
 
