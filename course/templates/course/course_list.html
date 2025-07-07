@@ -1,7 +1,9 @@
-{% extends 'dashboard/base.html' %}
+{% extends 'course/base_course.html' %}
 
-{% block title %}Course List{% endblock %}
+{#if need to adjust the title#}
+{#{% block title %}Courses{% endblock %}#}
 {% block content %}
+    <h4 style="text-align: center">Course List</h4>
     <div class="container py-4">
         <ul>
             {% for course in courses %}
