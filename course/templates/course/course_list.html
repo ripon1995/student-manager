@@ -3,15 +3,17 @@
 {#if need to adjust the title#}
 {#{% block title %}Courses{% endblock %}#}
 {% block content %}
-    <h4 style="text-align: center">Course List</h4>
+    <h2 style="text-align: center">Course List</h2>
     <div class="container py-4">
         <ul>
             {% for course in courses %}
                 <div class="card shadow mb-4" style="width: 100%;">
-                    <div class="card-body">
-                        <h5 class="card-title"> {{ course.title }}</h5>
-                        <p class="card-text">Some quick content about the card.</p>
-                        <a href="#" class="btn btn-info">View Course</a>
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="card-title"> <i class="fa-solid fa-hashtag"></i> {{ course.title }}</h4>
+                            <p class="card-text">Some quick content about the card.</p>
+                        </div>
+                        <a href="{% url 'course_detail_view' course.id %}" class="btn btn-info"> <i class="fa-solid fa-arrow-right"></i> View Course</a>
                     </div>
                 </div>
             {% empty %}
