@@ -136,11 +136,12 @@
             </div>
         </div>
     </div>
-
+    <div id="attendance-view-list" class="mt-3" style="display: none;"></div>
     <script>
 
         const courseId = '{{ course.id }}';
         const csrfToken = '{{ csrf_token }}';
+
         // Utility: Toggle display
         function toggleDisplay(element) {
             if (element) {
@@ -221,6 +222,32 @@
             }
         }
 
+
+        function renderAttendanceViewList(data, selectedDate) {
+
+            // Clone the attendance form
+            const formDiv = document.getElementById('attendance-form');
+            const viewDiv = document.getElementById('attendance-view-list');
+            viewDiv.innerHTML = formDiv.innerHTML;
+            console.log('Rendering attendance view list for date:', selectedDate);
+            // Remove the submit button
+            const submitBtn = viewDiv.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.remove();
+
+            // Set all checkboxes to disabled
+            const checkboxes = viewDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
+            checkboxes.forEach(cb => {
+                cb.disabled = true;
+                cb.checked = data.map(item => String(item.student)).includes(cb.getAttribute('data-student-id'));
+            });
+
+            // Optionally update the title
+            const title = viewDiv.querySelector('.card-title');
+            if (title) title.innerHTML = `<i class="fa-solid fa-calendar"></i> Attendance for ${selectedDate}`;
+
+            viewDiv.style.display = 'block';
+        }
+
         // View Attendance by Date
         function setupViewAttendanceByDate() {
             const viewAttendanceLink = document.getElementById('show-custom-attendance-list');
@@ -249,10 +276,14 @@
                         },
                         body: JSON.stringify({course: courseId, date: selectedDate})
                     })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
-                            // Render attendance data for selected date here
-                            alert('Attendance data loaded for ' + selectedDate);
+                            renderAttendanceViewList(data, selectedDate);
                         })
                         .catch(() => alert('Error fetching attendance data.'));
                 });
@@ -264,7 +295,7 @@
             setupAttendanceFormToggle();
             setupAttendanceFormSubmit();
             setupViewAttendanceByDate();
-
+            {#renderAttendanceViewList([], '');#}
         });
     </script>
 {% endblock %}
