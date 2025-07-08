@@ -138,103 +138,102 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const courseId = '{{ course.id }}';
 
-            // Student list toggle
+        const courseId = '{{ course.id }}';
+        const csrfToken = '{{ csrf_token }}';
+        // Utility: Toggle display
+        function toggleDisplay(element) {
+            if (element) {
+                element.style.display = element.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Student List Toggle
+        function setupStudentListToggle() {
             const link = document.getElementById('show-student-list');
             const listDiv = document.getElementById('student-list');
-            if (link) {
+            if (link && listDiv) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
-                    listDiv.style.display = listDiv.style.display === 'none' ? 'block' : 'none';
+                    toggleDisplay(listDiv);
                 });
             }
+        }
 
-            // Attendance form toggle and fetch
+        // Attendance Form: Fetch and Mark
+        function fetchAndMarkAttendance(date) {
+            const attendanceFormDiv = document.getElementById('attendance-form');
+            fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({course: courseId, date: date})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const presentStudentIds = data.map(item => item.student);
+                    const checkboxes = attendanceFormDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = presentStudentIds.includes(cb.getAttribute('data-student-id'));
+                    });
+                })
+                .catch(() => alert('Error fetching attendance data.'));
+        }
+
+        // Attendance Form Toggle
+        function setupAttendanceFormToggle() {
             const attendanceLink = document.getElementById('show-attendance-form');
             const attendanceFormDiv = document.getElementById('attendance-form');
-            if (attendanceLink) {
+            if (attendanceLink && attendanceFormDiv) {
                 attendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
-                    attendanceFormDiv.style.display = attendanceFormDiv.style.display === 'none' ? 'block' : 'none';
-
-                    // Get today's date
-                    const date = new Date().toISOString().slice(0, 10);
-                    const url = 'http://127.0.0.1:8000/attendance/api/attendances/list/';
-                    // Call the attendance list API
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({
-                            course: courseId,
-                            date: date
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            const presentStudentIds = data.map(item => item.student);
-                            const checkboxes = attendanceFormDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
-                            checkboxes.forEach(cb => {
-                                cb.checked = !!presentStudentIds.includes(cb.getAttribute('data-student-id'));
-                            });
-                        })
-                        .catch(error => {
-                            alert('Error fetching attendance data.');
-                        });
+                    toggleDisplay(attendanceFormDiv);
+                    const today = new Date().toISOString().slice(0, 10);
+                    fetchAndMarkAttendance(today);
                 });
             }
+        }
 
-            // Attendance form submit
-            const attendanceForm = attendanceFormDiv.querySelector('form');
+        // Attendance Form Submit
+        function setupAttendanceFormSubmit() {
+            const attendanceFormDiv = document.getElementById('attendance-form');
+            const attendanceForm = attendanceFormDiv ? attendanceFormDiv.querySelector('form') : null;
             if (attendanceForm) {
                 attendanceForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
                     const students = Array.from(checkboxes).map(cb => cb.getAttribute('data-student-id'));
-
-                    // Get course ID and date (set date as today)
                     const date = new Date().toISOString().slice(0, 10);
-                    const url = 'http://127.0.0.1:8000/attendance/api/attendances/';
-                    fetch(url, {
+                    fetch('http://127.0.0.1:8000/attendance/api/attendances/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
+                            'X-CSRFToken': csrfToken
                         },
-                        body: JSON.stringify({
-                            course: courseId,
-                            date: date,
-                            students: students
-                        })
+                        body: JSON.stringify({course: courseId, date: date, students: students})
                     })
                         .then(response => response.json())
-                        .then(data => {
-                            alert('Attendance submitted!');
-                        })
-                        .catch(error => {
-                            alert('Error submitting attendance.');
-                        });
+                        .then(() => alert('Attendance submitted!'))
+                        .catch(() => alert('Error submitting attendance.'));
                 });
             }
+        }
 
-
+        // View Attendance by Date
+        function setupViewAttendanceByDate() {
             const viewAttendanceLink = document.getElementById('show-custom-attendance-list');
             const datePickerDiv = document.getElementById('attendance-date-picker');
             const viewAttendanceBtn = document.getElementById('view-attendance-btn');
             const attendanceDateInput = document.getElementById('attendance-date');
-
-            if (viewAttendanceLink) {
+            if (viewAttendanceLink && datePickerDiv) {
                 viewAttendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
-                    datePickerDiv.style.display = datePickerDiv.style.display === 'none' ? 'block' : 'none';
+                    toggleDisplay(datePickerDiv);
                 });
             }
-
-            if (viewAttendanceBtn) {
+            if (viewAttendanceBtn && attendanceDateInput) {
                 viewAttendanceBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     const selectedDate = attendanceDateInput.value;
@@ -242,29 +241,29 @@
                         alert('Please select a date.');
                         return;
                     }
-                    // Call your attendance list API with selectedDate
                     fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
+                            'X-CSRFToken': csrfToken
                         },
-                        body: JSON.stringify({
-                            course: courseId,
-                            date: selectedDate
-                        })
+                        body: JSON.stringify({course: courseId, date: selectedDate})
                     })
                         .then(response => response.json())
                         .then(data => {
-                            // Handle/display attendance data for selected date
+                            // Render attendance data for selected date here
                             alert('Attendance data loaded for ' + selectedDate);
-                            // You can render the data as needed here
                         })
-                        .catch(error => {
-                            alert('Error fetching attendance data.');
-                        });
+                        .catch(() => alert('Error fetching attendance data.'));
                 });
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setupStudentListToggle();
+            setupAttendanceFormToggle();
+            setupAttendanceFormSubmit();
+            setupViewAttendanceByDate();
 
         });
     </script>
