@@ -229,7 +229,6 @@
             const formDiv = document.getElementById('attendance-form');
             const viewDiv = document.getElementById('attendance-view-list');
             viewDiv.innerHTML = formDiv.innerHTML;
-            console.log('Rendering attendance view list for date:', selectedDate);
 
             // Add a close button at the top
             const closeBtn = document.createElement('button');
@@ -240,11 +239,10 @@
             };
             viewDiv.prepend(closeBtn);
 
-            // Remove the submit button
+
             const submitBtn = viewDiv.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.remove();
 
-            // Set all checkboxes to disabled
             const checkboxes = viewDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
             checkboxes.forEach(cb => {
                 cb.disabled = true;
