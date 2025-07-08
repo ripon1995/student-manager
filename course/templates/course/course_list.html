@@ -3,6 +3,20 @@
 {#if need to adjust the title#}
 {#{% block title %}Courses{% endblock %}#}
 {% block content %}
+
+    <style>
+        .card:hover {
+            background: lightseagreen;
+            transform: scale(1.05);
+            color: white;
+        }
+
+        .card:hover a,
+        .card:hover .btn {
+            color: white;
+        }
+    </style>
+
     <h2 style="text-align: center">Course List</h2>
     <div class="container py-4">
         <ul>
@@ -10,10 +24,11 @@
                 <div class="card shadow mb-4" style="width: 100%;">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
-                            <h4 class="card-title"> <i class="fa-solid fa-hashtag"></i> {{ course.title }}</h4>
+                            <h4 class="card-title"><i class="fa-solid fa-hashtag"></i> {{ course.title }}</h4>
                             <p class="card-text">Some quick content about the card.</p>
                         </div>
-                        <a href="{% url 'course_detail_view' course.id %}" class="btn btn-info"> <i class="fa-solid fa-arrow-right"></i> View Course</a>
+                        <a href="{% url 'course_detail_view' course.id %}" class="btn btn-info"> <i
+                                class="fa-solid fa-arrow-right"></i> View Course</a>
                     </div>
                 </div>
             {% empty %}
