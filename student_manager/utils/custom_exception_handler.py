@@ -26,7 +26,7 @@ def format_validation_errors(exc):
         'status': ErrorType.VALIDATION_ERROR.value,
         'status_code': status.HTTP_400_BAD_REQUEST,
         'errors': flatten_errors(exc.detail) if hasattr(exc, 'detail') else str(exc)
-    }, )
+    }, status=status.HTTP_400_BAD_REQUEST)
 
 
 def format_http404_errors(exc):

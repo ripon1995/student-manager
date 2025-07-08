@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'dashboard',
     'course',
     'student',
+    'attendance'
 ]
 
 REST_FRAMEWORK = {
