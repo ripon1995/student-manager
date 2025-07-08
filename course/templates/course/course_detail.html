@@ -57,7 +57,11 @@
                         <a href="#" id="show-attendance-form"> <i class="fa-solid fa-clipboard-user"></i> Attendance</a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <a href="#" id="show-student-list"> <i class="fa-solid fa-list"></i> Student List </a>
+                        <a href="#" id="show-student-list"> <i class="fa-solid fa-list-ol"></i> Student List </a>
+                    </h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="#" id="show-custom-attendance-list"> <i class="fa-solid fa-calendar"></i> View
+                            Attendance</a>
                     </h6>
                 </div>
             </div>
@@ -109,7 +113,8 @@
                                 style="background-color: #5b8ec6;">
                                 <span style="color:white">{{ forloop.counter }}</span>
                                 <span style="color:white">{{ student.first_name }} {{ student.last_name }}</span>
-                                <input type="checkbox" name="student_{{ student.id }}" data-student-id="{{ student.id }}" value="1">
+                                <input type="checkbox" name="student_{{ student.id }}"
+                                       data-student-id="{{ student.id }}" value="1">
                             </li>
                         {% empty %}
                             <li class="list-group-item">No students enrolled.</li>
@@ -120,6 +125,16 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <div id="attendance-date-picker" class="mt-3" style="display: none;">
+        <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
+            <div class="card-body">
+                <label for="attendance-date">Select Date:</label>
+                <input type="date" id="attendance-date" class="form-control"/>
+                <button id="view-attendance-btn" class="btn btn-primary mt-2">View Attendance</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -205,6 +220,52 @@
                         });
                 });
             }
+
+
+            const viewAttendanceLink = document.getElementById('show-custom-attendance-list');
+            const datePickerDiv = document.getElementById('attendance-date-picker');
+            const viewAttendanceBtn = document.getElementById('view-attendance-btn');
+            const attendanceDateInput = document.getElementById('attendance-date');
+
+            if (viewAttendanceLink) {
+                viewAttendanceLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    datePickerDiv.style.display = datePickerDiv.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+
+            if (viewAttendanceBtn) {
+                viewAttendanceBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const selectedDate = attendanceDateInput.value;
+                    if (!selectedDate) {
+                        alert('Please select a date.');
+                        return;
+                    }
+                    // Call your attendance list API with selectedDate
+                    fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            course: courseId,
+                            date: selectedDate
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle/display attendance data for selected date
+                            alert('Attendance data loaded for ' + selectedDate);
+                            // You can render the data as needed here
+                        })
+                        .catch(error => {
+                            alert('Error fetching attendance data.');
+                        });
+                });
+            }
+
         });
     </script>
 {% endblock %}
