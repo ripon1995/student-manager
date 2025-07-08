@@ -109,7 +109,7 @@
                                 style="background-color: #5b8ec6;">
                                 <span style="color:white">{{ forloop.counter }}</span>
                                 <span style="color:white">{{ student.first_name }} {{ student.last_name }}</span>
-                                <input type="checkbox" name="student_{{ student.id }}" value="1">
+                                <input type="checkbox" name="student_{{ student.id }}" data-student-id="{{ student.id }}" value="1">
                             </li>
                         {% empty %}
                             <li class="list-group-item">No students enrolled.</li>
@@ -124,6 +124,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const courseId = '{{ course.id }}';
+
+            // Student list toggle
             const link = document.getElementById('show-student-list');
             const listDiv = document.getElementById('student-list');
             if (link) {
@@ -132,27 +135,62 @@
                     listDiv.style.display = listDiv.style.display === 'none' ? 'block' : 'none';
                 });
             }
-        });
-        document.addEventListener('DOMContentLoaded', function () {
+
+            // Attendance form toggle and fetch
             const attendanceLink = document.getElementById('show-attendance-form');
-            const attendanceForm = document.getElementById('attendance-form');
+            const attendanceFormDiv = document.getElementById('attendance-form');
             if (attendanceLink) {
                 attendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
-                    attendanceForm.style.display = attendanceForm.style.display === 'none' ? 'block' : 'none';
+                    attendanceFormDiv.style.display = attendanceFormDiv.style.display === 'none' ? 'block' : 'none';
+
+                    // Get today's date
+                    const date = new Date().toISOString().slice(0, 10);
+
+                    // Call the attendance list API
+                    fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            course: courseId,
+                            date: date
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Get the list of present student IDs
+                            const presentStudentIds = data.map(item => item.student);
+
+                            // Mark checkboxes as checked for present students
+                            const checkboxes = attendanceFormDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
+                            checkboxes.forEach(cb => {
+                                if (presentStudentIds.includes(cb.getAttribute('data-student-id'))) {
+                                    cb.checked = true;
+                                } else {
+                                    cb.checked = false;
+                                }
+                            });
+                        })
+                        .catch(error => {
+                            alert('Error fetching attendance data.');
+                        });
                 });
             }
 
+            // Attendance form submit
+            const attendanceForm = attendanceFormDiv.querySelector('form');
             if (attendanceForm) {
                 attendanceForm.addEventListener('submit', function (e) {
                     e.preventDefault();
 
                     // Collect checked students
                     const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
-                    const students = Array.from(checkboxes).map(cb => cb.name.replace('student_', ''));
+                    const students = Array.from(checkboxes).map(cb => cb.getAttribute('data-student-id'));
 
                     // Get course ID and date (set date as today)
-                    const courseId = '{{ course.id }}';
                     const date = new Date().toISOString().slice(0, 10);
                     const url = 'http://127.0.0.1:8000/attendance/api/attendances/';
                     fetch(url, {
@@ -169,11 +207,9 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            // Handle success (show message, reset form, etc.)
                             alert('Attendance submitted!');
                         })
                         .catch(error => {
-                            // Handle error
                             alert('Error submitting attendance.');
                         });
                 });

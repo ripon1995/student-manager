@@ -1,8 +1,9 @@
 from .serializers import AttendanceSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
-
+from .models import Attendance
 
 class AttendanceBulkCreateAPIView(CreateAPIView):
     serializer_class = AttendanceSerializer
@@ -11,9 +12,6 @@ class AttendanceBulkCreateAPIView(CreateAPIView):
         course = request.data.get('course')
         date = request.data.get('date')
         students = request.data.get('students', [])
-        print('student : ', students)
-        print('course', course)
-        print('date', date)
         created = []
         for student in students:
             data = {
@@ -26,3 +24,15 @@ class AttendanceBulkCreateAPIView(CreateAPIView):
             serializer.save()
             created.append(serializer.data)
         return Response(created, status=status.HTTP_201_CREATED)
+
+
+class AttendanceListByCourseAPIView(APIView):
+    serializer_class = AttendanceSerializer
+
+    def post(self, request, *args, **kwargs):
+        course_id = request.data.get('course')
+        date = request.data.get('date')
+        queryset = Attendance.objects.filter(course_id=course_id, date=date)
+        serializer = AttendanceSerializer(queryset, many=True)
+        return Response(serializer.data)
+
