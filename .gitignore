@@ -5,3 +5,5 @@ env/
 venv/
 .env*
 .idea/
+/static/
+staticfiles/
