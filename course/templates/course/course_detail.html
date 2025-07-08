@@ -54,7 +54,7 @@
                 <i><p style="text-align: center"> {{ course.course_quote }} </p></i>
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <a href="#"> <i class="fa-solid fa-clipboard-user"></i> Attendance</a>
+                        <a href="#" id="show-attendance-form"> <i class="fa-solid fa-clipboard-user"></i> Attendance</a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
                         <a href="#" id="show-student-list"> <i class="fa-solid fa-list"></i> Student List </a>
@@ -68,7 +68,7 @@
     <div id="student-list" class="mt-3" style="display: none;">
         <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
             <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                <h5 class="card-title"> <i class="fa-solid fa-list"></i> Student List</h5>
+                <h5 class="card-title"><i class="fa-solid fa-list"></i> Student List</h5>
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         style="background-color: #204d74; color: white; font-weight: bold;">
@@ -91,6 +91,37 @@
         </div>
     </div>
 
+    <div id="attendance-form" class="mt-3" style="display: none;">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    <h5 class="card-title"><i class="fa-solid fa-clipboard-user"></i> Take Attendance</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            style="background-color: #204d74; color: white; font-weight: bold;">
+                            <span>SL</span>
+                            <span>Name</span>
+                            <span>Present</span>
+                        </li>
+                        {% for student in course.students.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center"
+                                style="background-color: #5b8ec6;">
+                                <span style="color:white">{{ forloop.counter }}</span>
+                                <span style="color:white">{{ student.first_name }} {{ student.last_name }}</span>
+                                <input type="checkbox" name="student_{{ student.id }}" value="1">
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No students enrolled.</li>
+                        {% endfor %}
+                    </ul>
+                    <br>
+                    <button type="submit" class="btn btn-success">Submit Attendance</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const link = document.getElementById('show-student-list');
@@ -99,6 +130,52 @@
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
                     listDiv.style.display = listDiv.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            const attendanceLink = document.getElementById('show-attendance-form');
+            const attendanceForm = document.getElementById('attendance-form');
+            if (attendanceLink) {
+                attendanceLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    attendanceForm.style.display = attendanceForm.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+
+            if (attendanceForm) {
+                attendanceForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Collect checked students
+                    const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
+                    const students = Array.from(checkboxes).map(cb => cb.name.replace('student_', ''));
+
+                    // Get course ID and date (set date as today)
+                    const courseId = '{{ course.id }}';
+                    const date = new Date().toISOString().slice(0, 10);
+                    const url = 'http://127.0.0.1:8000/attendance/api/attendances/';
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            course: courseId,
+                            date: date,
+                            students: students
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Handle success (show message, reset form, etc.)
+                            alert('Attendance submitted!');
+                        })
+                        .catch(error => {
+                            // Handle error
+                            alert('Error submitting attendance.');
+                        });
                 });
             }
         });
