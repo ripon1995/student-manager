@@ -146,9 +146,9 @@
 
                     // Get today's date
                     const date = new Date().toISOString().slice(0, 10);
-
+                    const url = 'http://127.0.0.1:8000/attendance/api/attendances/list/';
                     // Call the attendance list API
-                    fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                    fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -161,17 +161,10 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            // Get the list of present student IDs
                             const presentStudentIds = data.map(item => item.student);
-
-                            // Mark checkboxes as checked for present students
                             const checkboxes = attendanceFormDiv.querySelectorAll('input[type="checkbox"][data-student-id]');
                             checkboxes.forEach(cb => {
-                                if (presentStudentIds.includes(cb.getAttribute('data-student-id'))) {
-                                    cb.checked = true;
-                                } else {
-                                    cb.checked = false;
-                                }
+                                cb.checked = !!presentStudentIds.includes(cb.getAttribute('data-student-id'));
                             });
                         })
                         .catch(error => {
@@ -185,8 +178,6 @@
             if (attendanceForm) {
                 attendanceForm.addEventListener('submit', function (e) {
                     e.preventDefault();
-
-                    // Collect checked students
                     const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
                     const students = Array.from(checkboxes).map(cb => cb.getAttribute('data-student-id'));
 
