@@ -230,6 +230,16 @@
             const viewDiv = document.getElementById('attendance-view-list');
             viewDiv.innerHTML = formDiv.innerHTML;
             console.log('Rendering attendance view list for date:', selectedDate);
+
+            // Add a close button at the top
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.className = 'btn btn-danger btn-sm float-end';
+            closeBtn.onclick = function () {
+                viewDiv.style.display = 'none';
+            };
+            viewDiv.prepend(closeBtn);
+
             // Remove the submit button
             const submitBtn = viewDiv.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.remove();
@@ -295,7 +305,6 @@
             setupAttendanceFormToggle();
             setupAttendanceFormSubmit();
             setupViewAttendanceByDate();
-            {#renderAttendanceViewList([], '');#}
         });
     </script>
 {% endblock %}
