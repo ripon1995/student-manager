@@ -6,6 +6,11 @@ project structure
 student_manager/
 ├── manage.py
 ├── student_manager/
+│   ├── management/
+│   │   ├── __init__.py
+│       ├── commands/
+│       │   ├── __init__.py
+│       │   ├── createinitialsuperuser.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── static/
