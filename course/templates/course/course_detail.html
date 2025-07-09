@@ -2,6 +2,14 @@
 
 {% block content %}
     <style>
+        .card-subtitle a:hover,
+        .active-menu:hover {
+            background-color: #16375a !important; /* Darker blue on hover */
+            color: #fff !important;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
 
         .active-menu {
             background-color: #204d74 !important;
@@ -93,7 +101,8 @@
                         <a href="#" id="show-attendance-form"> <i class="fa-solid fa-clipboard-user"></i> Attendance</a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <a href="#" id="show-student-list" class="active-menu"> <i class="fa-solid fa-list-ol"></i> Student List </a>
+                        <a href="#" id="show-student-list" class="active-menu"> <i class="fa-solid fa-list-ol"></i>
+                            Student List </a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
                         <a href="#" id="show-payment-list"> <i class="fa-solid fa-money-bill-1"></i> Payment </a>
