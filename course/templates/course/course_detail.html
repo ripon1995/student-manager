@@ -191,6 +191,14 @@
         const courseId = '{{ course.id }}';
         const csrfToken = '{{ csrf_token }}';
 
+        function hideAllSections() {
+            document.getElementById('student-list').style.display = 'none';
+            document.getElementById('payment-list').style.display = 'none';
+            document.getElementById('attendance-form').style.display = 'none';
+            document.getElementById('attendance-date-picker').style.display = 'none';
+            document.getElementById('attendance-view-list').style.display = 'none';
+        }
+
         // Utility: Toggle display
         function toggleDisplay(element) {
             if (element) {
@@ -205,6 +213,7 @@
             if (link && listDiv) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections()
                     toggleDisplay(listDiv);
                 });
             }
@@ -239,6 +248,7 @@
             if (attendanceLink && attendanceFormDiv) {
                 attendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections();
                     toggleDisplay(attendanceFormDiv);
                     const today = new Date().toISOString().slice(0, 10);
                     fetchAndMarkAttendance(today);
@@ -315,6 +325,7 @@
             if (viewAttendanceLink && datePickerDiv) {
                 viewAttendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections();
                     toggleDisplay(datePickerDiv);
                 });
             }
@@ -404,6 +415,7 @@
             if (paymentLink && paymentListDiv) {
                 paymentLink.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections();
                     if (paymentListDiv.style.display === 'none') {
                         fetchPayments();
                         paymentListDiv.style.display = 'block';
