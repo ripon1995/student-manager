@@ -353,9 +353,6 @@
         const paymentListItems = document.getElementById('payment-list-items');
 
         function renderPayments(payments) {
-            payments.forEach((payment, idx) => {
-                console.log('payment data : ', payment);
-            })
 
             // Remove old payment rows except the header
             paymentListItems.querySelectorAll('li:not(:first-child)').forEach(li => li.remove());
@@ -370,6 +367,9 @@
 
 
             payments.forEach((payment, idx) => {
+                const dateObj = new Date(payment.date);
+                const formattedDate = dateObj.toLocaleDateString('en-GB');
+
                 const li = document.createElement('li');
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 li.style.backgroundColor = '#5b8ec6';
@@ -378,7 +378,7 @@
                 <span style="color:white">${payment.student_name}</span>
                 <span style="color:white">${payment.amount}</span>
                 <span style="color:white">${payment.payment_for_month}</span>
-                <span style="color:white">${payment.date}</span>
+                <span style="color:white">${formattedDate}</span>
             `;
                 paymentListItems.appendChild(li);
             });
