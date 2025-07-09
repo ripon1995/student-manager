@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from rest_framework.generics import ListCreateAPIView, ListAPIView
 from .models import Payment
 from .serializers import PaymentListCreateSerializer, CurrentMonthPaymentListSerializer
@@ -14,7 +14,7 @@ class CurrentMonthPaymentListAPIView(ListAPIView):
     queryset = Payment.objects.all()
 
     def get_date_range(self):
-        now = datetime.datetime.now()
+        now = timezone.now()
         first_day = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         if now.month == 12:
             next_month = now.replace(year=now.year + 1, month=1, day=1)
