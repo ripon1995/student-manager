@@ -88,6 +88,9 @@
                         <a href="#" id="show-student-list"> <i class="fa-solid fa-list-ol"></i> Student List </a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="#" id="show-payment-list"> <i class="fa-solid fa-money-bill-1"></i> Payment </a>
+                    </h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
                         <a href="#" id="show-custom-attendance-list"> <i class="fa-solid fa-calendar"></i> View
                             Attendance</a>
                     </h6>
@@ -117,6 +120,36 @@
                         </li>
                     {% empty %}
                         <li class="list-group-item">No students enrolled.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-list" class="mt-3" style="display: none;">
+        <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                <h5 class="card-title"><i class="fa-solid fa-money-bill-1"></i> Payment List</h5>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        style="background-color: #204d74; color: white; font-weight: bold;">
+                        <span>SL</span>
+                        <span>Student</span>
+                        <span>Amount</span>
+                        <span>Month</span>
+                        <span>Date</span>
+                    </li>
+                    {% for payment in course.payments.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            style="background-color: #5b8ec6;">
+                            <span style="color:white">{{ forloop.counter }}</span>
+                            <span style="color:white">{{ payment.student.first_name }} {{ payment.student.last_name }}</span>
+                            <span style="color:white">{{ payment.amount }}</span>
+                            <span style="color:white">{{ payment.payment_for_month }}</span>
+                            <span style="color:white">{{ payment.date|date:"Y-m-d" }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No payments found.</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -327,11 +360,23 @@
             }
         }
 
+        function setupPaymentList() {
+            const paymentLink = document.getElementById('show-payment-list');
+            const paymentListDiv = document.getElementById('payment-list');
+            if (paymentLink && paymentListDiv) {
+                paymentLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    paymentListDiv.style.display = paymentListDiv.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             setupStudentListToggle();
             setupAttendanceFormToggle();
             setupAttendanceFormSubmit();
             setupViewAttendanceByDate();
+            setupPaymentList();
         });
     </script>
 {% endblock %}
