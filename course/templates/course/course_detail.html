@@ -2,6 +2,14 @@
 
 {% block content %}
     <style>
+
+        .active-menu {
+            background-color: #204d74 !important;
+            color: #fff !important;
+            border-radius: 5px;
+            padding: 2px 8px;
+        }
+
         .card {
             width: 100% !important;
             height: 300px !important;
@@ -200,6 +208,13 @@
             document.getElementById('attendance-view-list').style.display = 'none';
         }
 
+        function clearActiveMenu() {
+            document.getElementById('show-attendance-form').classList.remove('active-menu');
+            document.getElementById('show-student-list').classList.remove('active-menu');
+            document.getElementById('show-payment-list').classList.remove('active-menu');
+            document.getElementById('show-custom-attendance-list').classList.remove('active-menu');
+        }
+
         // Utility: Toggle display
         function toggleDisplay(element) {
             if (element) {
@@ -215,6 +230,8 @@
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
                     hideAllSections()
+                    clearActiveMenu();
+                    link.classList.add('active-menu');
                     toggleDisplay(listDiv);
                 });
             }
@@ -250,6 +267,8 @@
                 attendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
                     hideAllSections();
+                    clearActiveMenu();
+                    attendanceLink.classList.add('active-menu');
                     toggleDisplay(attendanceFormDiv);
                     const today = new Date().toISOString().slice(0, 10);
                     fetchAndMarkAttendance(today);
@@ -317,6 +336,8 @@
                 viewAttendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
                     hideAllSections();
+                    clearActiveMenu();
+                    viewAttendanceLink.classList.add('active-menu');
                     toggleDisplay(datePickerDiv);
                 });
             }
@@ -407,6 +428,8 @@
                 paymentLink.addEventListener('click', function (e) {
                     e.preventDefault();
                     hideAllSections();
+                    clearActiveMenu();
+                    paymentLink.classList.add('active-menu');
                     if (paymentListDiv.style.display === 'none') {
                         fetchPayments();
                         paymentListDiv.style.display = 'block';
