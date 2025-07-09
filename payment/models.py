@@ -11,6 +11,12 @@ class Payment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='payments')
 
+    @property
+    def student_full_name(self):
+        print(self.student.first_name)
+        return f"{self.student.first_name} {self.student.last_name}"
+
+
     def __str__(self):
         return f"Payment of {self.amount} on {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
 
