@@ -249,7 +249,7 @@
         // Attendance Form: Fetch and Mark
         function fetchAndMarkAttendance(date) {
             const attendanceFormDiv = document.getElementById('attendance-form');
-            fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+            fetch('/attendance/api/attendances/list/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -295,7 +295,7 @@
                     const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
                     const students = Array.from(checkboxes).map(cb => cb.getAttribute('data-student-id'));
                     const date = new Date().toISOString().slice(0, 10);
-                    fetch('http://127.0.0.1:8000/attendance/api/attendances/', {
+                    fetch('/attendance/api/attendances/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -358,7 +358,7 @@
                         alert('Please select a date.');
                         return;
                     }
-                    fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                    fetch('/attendance/api/attendances/list/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -417,7 +417,7 @@
         }
 
         function fetchPayments() {
-            fetch(`http://127.0.0.1:8000/payment/api/payments/current-month/?course=${courseId}`, {
+            fetch(`/payment/api/payments/current-month/?course=${courseId}`, {
                 headers: {
                     'X-CSRFToken': csrfToken
                 }
