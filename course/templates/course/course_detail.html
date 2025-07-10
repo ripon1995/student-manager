@@ -2,6 +2,22 @@
 
 {% block content %}
     <style>
+        .card-subtitle a:hover,
+        .active-menu:hover {
+            background-color: #16375a !important;
+            color: #fff !important;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .active-menu {
+            background-color: #204d74 !important;
+            color: #fff !important;
+            border-radius: 5px;
+            padding: 2px 8px;
+        }
+
         .card {
             width: 100% !important;
             height: 300px !important;
@@ -85,7 +101,11 @@
                         <a href="#" id="show-attendance-form"> <i class="fa-solid fa-clipboard-user"></i> Attendance</a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <a href="#" id="show-student-list"> <i class="fa-solid fa-list-ol"></i> Student List </a>
+                        <a href="#" id="show-student-list" class="active-menu"> <i class="fa-solid fa-list-ol"></i>
+                            Student List </a>
+                    </h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <a href="#" id="show-payment-list"> <i class="fa-solid fa-money-bill-1"></i> Payment </a>
                     </h6>
                     <h6 class="card-subtitle mb-2 text-muted">
                         <a href="#" id="show-custom-attendance-list"> <i class="fa-solid fa-calendar"></i> View
@@ -97,7 +117,7 @@
         </div>
     </div>
 
-    <div id="student-list" class="mt-3" style="display: none;">
+    <div id="student-list" class="mt-3">
         <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
             <div class="card-body" style="max-height: 300px; overflow-y: auto;">
                 <h5 class="card-title"><i class="fa-solid fa-list"></i> Student List</h5>
@@ -118,6 +138,24 @@
                     {% empty %}
                         <li class="list-group-item">No students enrolled.</li>
                     {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-list" class="mt-3" style="display: none;">
+        <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                <h5 class="card-title"><i class="fa-solid fa-money-bill-1"></i> Payment List(Current month)</h5>
+                <ul class="list-group" id="payment-list-items">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        style="background-color: #204d74; color: white; font-weight: bold;">
+                        <span>SL</span>
+                        <span>Student</span>
+                        <span>Amount</span>
+                        <span>Month</span>
+                        <span>Date</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -154,21 +192,37 @@
             </div>
         </form>
     </div>
-
-    <div id="attendance-date-picker" class="mt-3" style="display: none;">
-        <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
-            <div class="card-body">
-                <label for="attendance-date">Select Date:</label>
-                <input type="date" id="attendance-date" class="form-control"/>
-                <button id="view-attendance-btn" class="btn btn-primary mt-2">View Attendance</button>
+    <div class="d-flex" style="gap: 16px;">
+        <div id="attendance-date-picker" class="mt-3" style="display: none; flex: 0 0 30%; max-width: 30%;">
+            <div class="card" style="border-radius: 0px; background-color: #f3f3f3;">
+                <div class="card-body">
+                    <label for="attendance-date">Select Date:</label>
+                    <input type="date" id="attendance-date" class="form-control"/>
+                    <button id="view-attendance-btn" class="btn btn-primary mt-2">View Attendance</button>
+                </div>
             </div>
         </div>
+        <div id="attendance-view-list" class="mt-3" style="display: none; flex: 1 1 70%; max-width: 70%;"></div>
     </div>
-    <div id="attendance-view-list" class="mt-3" style="display: none;"></div>
     <script>
 
         const courseId = '{{ course.id }}';
         const csrfToken = '{{ csrf_token }}';
+
+        function hideAllSections() {
+            document.getElementById('student-list').style.display = 'none';
+            document.getElementById('payment-list').style.display = 'none';
+            document.getElementById('attendance-form').style.display = 'none';
+            document.getElementById('attendance-date-picker').style.display = 'none';
+            document.getElementById('attendance-view-list').style.display = 'none';
+        }
+
+        function clearActiveMenu() {
+            document.getElementById('show-attendance-form').classList.remove('active-menu');
+            document.getElementById('show-student-list').classList.remove('active-menu');
+            document.getElementById('show-payment-list').classList.remove('active-menu');
+            document.getElementById('show-custom-attendance-list').classList.remove('active-menu');
+        }
 
         // Utility: Toggle display
         function toggleDisplay(element) {
@@ -184,6 +238,9 @@
             if (link && listDiv) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections()
+                    clearActiveMenu();
+                    link.classList.add('active-menu');
                     toggleDisplay(listDiv);
                 });
             }
@@ -192,7 +249,7 @@
         // Attendance Form: Fetch and Mark
         function fetchAndMarkAttendance(date) {
             const attendanceFormDiv = document.getElementById('attendance-form');
-            fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+            fetch('/attendance/api/attendances/list/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -218,6 +275,9 @@
             if (attendanceLink && attendanceFormDiv) {
                 attendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections();
+                    clearActiveMenu();
+                    attendanceLink.classList.add('active-menu');
                     toggleDisplay(attendanceFormDiv);
                     const today = new Date().toISOString().slice(0, 10);
                     fetchAndMarkAttendance(today);
@@ -235,7 +295,7 @@
                     const checkboxes = attendanceForm.querySelectorAll('input[type="checkbox"]:checked');
                     const students = Array.from(checkboxes).map(cb => cb.getAttribute('data-student-id'));
                     const date = new Date().toISOString().slice(0, 10);
-                    fetch('http://127.0.0.1:8000/attendance/api/attendances/', {
+                    fetch('/attendance/api/attendances/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -257,16 +317,6 @@
             const formDiv = document.getElementById('attendance-form');
             const viewDiv = document.getElementById('attendance-view-list');
             viewDiv.innerHTML = formDiv.innerHTML;
-
-            // Add a close button at the top
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Close';
-            closeBtn.className = 'btn btn-danger btn-sm float-end';
-            closeBtn.onclick = function () {
-                viewDiv.style.display = 'none';
-            };
-            viewDiv.prepend(closeBtn);
-
 
             const submitBtn = viewDiv.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.remove();
@@ -294,6 +344,9 @@
             if (viewAttendanceLink && datePickerDiv) {
                 viewAttendanceLink.addEventListener('click', function (e) {
                     e.preventDefault();
+                    hideAllSections();
+                    clearActiveMenu();
+                    viewAttendanceLink.classList.add('active-menu');
                     toggleDisplay(datePickerDiv);
                 });
             }
@@ -305,7 +358,7 @@
                         alert('Please select a date.');
                         return;
                     }
-                    fetch('http://127.0.0.1:8000/attendance/api/attendances/list/', {
+                    fetch('/attendance/api/attendances/list/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -327,11 +380,81 @@
             }
         }
 
+        const paymentLink = document.getElementById('show-payment-list');
+        const paymentListDiv = document.getElementById('payment-list');
+        const paymentListItems = document.getElementById('payment-list-items');
+
+        function renderPayments(payments) {
+
+            // Remove old payment rows except the header
+            paymentListItems.querySelectorAll('li:not(:first-child)').forEach(li => li.remove());
+
+            if (payments.length === 0) {
+                const emptyLi = document.createElement('li');
+                emptyLi.className = 'list-group-item';
+                emptyLi.textContent = 'No payments found.';
+                paymentListItems.appendChild(emptyLi);
+                return;
+            }
+
+
+            payments.forEach((payment, idx) => {
+                const dateObj = new Date(payment.date);
+                const formattedDate = dateObj.toLocaleDateString('en-GB');
+
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.style.backgroundColor = '#5b8ec6';
+                li.innerHTML = `
+                <span style="color:white">${idx + 1}</span>
+                <span style="color:white">${payment.student_name}</span>
+                <span style="color:white">${payment.amount}</span>
+                <span style="color:white">${payment.payment_for_month}</span>
+                <span style="color:white">${formattedDate}</span>
+            `;
+                paymentListItems.appendChild(li);
+            });
+        }
+
+        function fetchPayments() {
+            fetch(`/payment/api/payments/current-month/?course=${courseId}`, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    renderPayments(data);
+                })
+                .catch(() => {
+                    renderPayments([]);
+                });
+        }
+
+        function setupPaymentList() {
+
+            if (paymentLink && paymentListDiv) {
+                paymentLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    hideAllSections();
+                    clearActiveMenu();
+                    paymentLink.classList.add('active-menu');
+                    if (paymentListDiv.style.display === 'none') {
+                        fetchPayments();
+                        paymentListDiv.style.display = 'block';
+                    } else {
+                        paymentListDiv.style.display = 'none';
+                    }
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             setupStudentListToggle();
             setupAttendanceFormToggle();
             setupAttendanceFormSubmit();
             setupViewAttendanceByDate();
+            setupPaymentList();
         });
     </script>
 {% endblock %}
